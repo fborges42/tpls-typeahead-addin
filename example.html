@@ -1,0 +1,16 @@
+<html>
+	<head>
+		<title>
+		</title>
+	</head>
+	<body>
+	 <input name="team" id="teams" type="text"
+                    placeholder="Select a team"
+                    ng-model="selectedTeam"
+                    typeahead="team as team.name for team in teams | filter:$viewValue"
+                    typeahead-on-select="localChange()"
+                    typeahead-Cookie="true"
+                    typeahead-open-on-focus
+                    class="form-control">
+	</body>
+</html>
