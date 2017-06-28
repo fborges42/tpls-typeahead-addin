@@ -1,5 +1,5 @@
 # tpls-typeahead-addin
-This is and extension of http://angular-ui.github.io/bootstrap/ that allows the following features.
+This is an extension of http://angular-ui.github.io/bootstrap/ that allows the following features.
 
 <ul>
   <li>typeahead-cookie: true / false</li>
