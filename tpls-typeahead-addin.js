@@ -1,4 +1,4 @@
-﻿//  addin for bootstrap typeahead
+//  addin for bootstrap typeahead
 //  shows list on click, focus and using cookie for last 3 items
 
 angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ngCookies'])
@@ -104,14 +104,12 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ngCookies'])
                     scope.$destroy();
                 });
 
-
-                typeaheadCtrl.cookieOnOff = function (inputValue) {
-                    typeaheadCtrl.usecookie = inputValue;
+                typeaheadCtrl.cookieOnOff = function (useCookie, cookieName) {
+                    typeaheadCtrl.usecookie = useCookie;
+                    typeaheadCtrl.cookieName = cookieName;
                 }
 
-                typeaheadCtrl.getMatchesAsync = function (inputValue, cookieName) {
-                    typeaheadCtrl.cookieName = cookieName;
-
+                typeaheadCtrl.getMatchesAsync = function (inputValue) {
                     var locals = { $viewValue: inputValue };
                     isLoadingSetter(originalScope, true);
                     $q.when(parserResult.source(scope, locals)).then(function (matches) {
@@ -140,7 +138,7 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ngCookies'])
 
 
 
-                                //loads cookies to scope
+                                //loads cookies to scope 
                                 if (typeaheadCtrl.usecookie) {
                                     var cookieMatch = $cookieStore.get(typeaheadCtrl.cookieName);
                                     if (_.isUndefined(cookieMatch)) {
@@ -425,7 +423,9 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ngCookies'])
               pre: function (scope, element, attr, ctrls) {
                   element.bind('click', function () {
                       var cookieOn = attr.typeaheadCookie === 'true';
-                      ctrls[0].cookieOnOff(cookieOn);
+                      var cookieName = "".concat(scope.$id, scope.$parent.$id);
+
+                      ctrls[0].cookieOnOff(cookieOn, cookieName);
                   });
               }
           }
@@ -438,9 +438,7 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ngCookies'])
           link: {
               post: function (scope, element, attr, ctrls) {
                   element.bind('click', function () {
-                      var cookieName = "".concat(scope.$id, scope.$parent.$id);
-
-                      ctrls[0].getMatchesAsync(ctrls[1].$viewValue, cookieName);
+                      ctrls[0].getMatchesAsync(ctrls[1].$viewValue);
                       scope.$apply();
                   });
               }
@@ -458,7 +456,7 @@ angular.module("template/typeahead/typeahead-popup.html", ['ngCookies']).run(["$
       "<div>\n" +
       "    <ul class=\"typeahead dropdown-menu\" ng-style=\"{display: isOpen()&&'block' || 'none', top: position.top+'px', left: position.left+'px'}\">\n" +
       "     <p ng-if=\"usecookie && cookiematches.length\" style=\"font-weight: bold;margin: 2%\">Utilizados recentemente</p>\n" +
-      "     <li ng-if=\"usecookie\" ng-repeat=\"match in cookiematches\" ng-click=\"selectMatchCookie(match)\">\n" +
+      "     <li ng-if=\"usecookie && cookiematches.length\" ng-repeat=\"match in cookiematches\" ng-click=\"selectMatchCookie(match)\">\n" +
       "        <typeahead-match  match=\"match\" query=\"query\" template-url=\"templateUrl\"></typeahead-match>\n" +
       "     </li>\n" +
 
@@ -478,7 +476,7 @@ function tog(v) {
 
 $(document).on('input', '.clearable-input', function () {
     $('.clearable')[tog(this.value)]('x');
-}).on('click', '.typeahead', function () {
+}).on('click', '.typeahead', function (e) {
     $('.x')[tog(this.offsetWidth - 18 < e.clientX - this.getBoundingClientRect().left)]('onX');
 }).on('mousemove', '.x', function (e) {
     $(this)[tog(this.offsetWidth - 18 < e.clientX - this.getBoundingClientRect().left)]('onX');
